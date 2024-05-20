@@ -3,113 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azure DevOps Wiki</title>
+    <title>Azure Deployment Lifecycle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-
-<h1>Contents</h1>
-
-<ul>
-    <li><a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/15/App-Rationalization?anchor=deployment">Deployment</a></li>
-    <li><a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/15/App-Rationalization?anchor=components">Components</a></li>
-    <li><a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/15/App-Rationalization?anchor=post-deployment-steps">Post-deployment Steps</a></li>
-    <li><a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/15/App-Rationalization?anchor=reference-architecture">Reference Architecture</a></li>
-</ul>
-
-<h1>Deployment</h1>
-
-<p>This recipe has following services being provisioned: New Vnet, keyvault, service principle, subnet, private end points.</p>
-
-<p>You can choose whether to deploy through the console directly or download as Terraform on GitHub to deploy later.</p>
-
-<img src="/.attachments/image-ef99c85b-63ef-438f-8801-07b4056c5787.png" alt="Deployment Image">
-
-<h1>Components</h1>
-
-<p>Applying App Rationalization one-click recipe will deploy following components inside of customer-provided Subscription.</p>
-
-<img src="/.attachments/image-99d93277-1d35-47b1-9dcc-545e4cf0fcd7.png" alt="Components Image">
-
-<ul>
-    <li>Resource group with App Rationalization components:
-        <ul>
-            <li>Enterprise Data Lake:
-                <ul>
-                    <li>ADLS Gen2 with containers for data storage</li>
-                    <li>Azure Data Factory for orchestration</li>
-                    <li>Azure Databricks for data transformation</li>
-                </ul>
-            </li>
-            <li>Data Hub
-                <ul>
-                    <li>Azure Cosmos DB as real-time database</li>
-                    <li>Azure Event Hubs for event detection</li>
-                    <li>Azure Functions and Logic Apps for message processing</li>
-                </ul>
-            </li>
-            <li>Channel Integration
-                <ul>
-                    <li>Azure API Management</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>Landing Zone components and settings:
-        <ul>
-            <li>Entra ID groups and test user</li>
-            <li>Security components:
-                <ul>
-                    <li>Private endpoints for corresponding services</li>
-                    <li>KeyVault keys and secrets</li>
-                </ul>
-            </li>
-            <li>Network Landing Zone components:
-                <ul>
-                    <li>Virtual Network with Subnets</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-</ul>
-
-<p><strong>See also:</strong> Architecture of <a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/2/One-Click-Recipes">One-Click Recipes</a> and <a href="https://dev.azure.com/SCFBankingDigitalCore/SCFBankingDigitalCore/_wiki/wikis/SCFBankingDigitalCore.wiki/4/Landing-Zone">Landing Zones</a>.</p>
-
-<h1>Post-deployment Steps</h1>
-
-<img src="/.attachments/image-9e9d9b44-c42d-4990-9ab8-ac279535e722.png" alt="Post-deployment Steps Image">
-
-<ol>
-    <li>Create data Databricks notebooks to load data from sources and process data.</li>
-    <li>Create Azure Data Factory orchestration for Databricks notebooks execution.</li>
-    <li>Create Logic Apps and/or Azure Function Apps to insert messages to Cosmos DB.</li>
-    <li>Create Logic Apps and/or Azure Function Apps to expose information from Cosmos DB to external applications.</li>
-    <li>Use Azure API Management to expose APIs for partner or enterprise systems</li>
-</ol>
-
-<h1>Reference Architecture</h1>
-
-<p>Applying App Rationalization one-click recipe allows to create components for near-real time integration with Partner and Enterprise applications based on Data Hub as NRT database, Data Lake for batch processing and components for API deployment and management.</p>
-
-<img src="/.attachments/image-5a9aa32a-8219-41b3-a4bf-fbeaccd3d017.png" alt="Reference Architecture Image">
-
-<ol>
-    <li>SOR’s are called System of records, that are the first generation of data. SOR’s from different platforms are collected and is given as input to EDL platform.</li>
-    <li>In EDL, we apply the PI handling, reduction, syncing, batching on the data. Segregate it and store it in a daily and monthly fashion.</li>
-    <li>In data hub, we take the copy of the Raw container into Cognitive services, that stores data as Archive data.</li>
-    <li>Blend is a platform that generates modular components and automated workflows for all the Banks. This Blend platform along with large collection of mainframe files are as well given as input to Data Hub Cosmos DB.</li>
-    <li>In channel integration, Azure Logic Apps simplifies the way that you connect legacy, modern, and cutting-edge systems across cloud, on premises, and hybrid environments and provides low-code-no-code tools for you to develop highly scalable integration solutions for your enterprise and business-to-business (B2B) scenarios.</li>
-    <li>Partner and enterprise application, for example:
-        <ul>
-            <li>Backbase provides solutions for retail banking, business banking and wealth management.</li>
-            <li>Pega is a low-code platform for workflow automation and AI-powered decisioning.</li>
-            <li>Yodlee is a platform that provides account aggregation – consolidating information from multiple accounts, e.g. credit card, bank, investment, email, travel rewards, etc., on one screen.</li>
-            <li>Salesforce provides data on sales, customer service, marketing automation, e-commerce, analytics, and application development.</li>
-        </ul>
-    </li>
-    <li>We collect data from all these platforms, store them and process them in Channel integration, and later use Power BI for Analytics and Reporting</li>
-</ol>
-
-<p>**How to deploy**: Please run the following Power shell script present in below path, BankingCloud\Cloud\OneClickRecipes\App_Rationalization\</p>
-
+    <h1>Azure Deployment Lifecycle</h1>
+    <p>Azure provides various deployment options and lifecycles for deploying applications and services. Here's a brief overview:</p>
+    <h2>1. Development</h2>
+    <p>In this stage, developers write and test code locally using their development environment. Azure provides tools like Visual Studio, Visual Studio Code, and Azure DevOps for seamless development.</p>
+    <h2>2. Build</h2>
+    <p>Once the development is completed, the code is built into deployable artifacts. Azure DevOps pipelines or other CI/CD tools automate the build process, ensuring consistency and reliability.</p>
+    <h2>3. Test</h2>
+    <p>After the build stage, the artifacts are deployed to test environments where various types of testing such as unit testing, integration testing, and user acceptance testing (UAT) are performed. Azure supports multiple testing frameworks and tools.</p>
+    <h2>4. Deployment</h2>
+    <p>Once the testing is successful, the artifacts are deployed to production or staging environments. Azure offers several deployment methods including manual deployment, continuous deployment (CD), blue-green deployment, and canary deployment.</p>
+    <h2>5. Monitoring and Management</h2>
+    <p>After deployment, Azure provides monitoring tools such as Azure Monitor, Azure Application Insights, and Log Analytics to monitor the performance, availability, and health of applications and services. Continuous monitoring and management help in identifying and resolving issues quickly.</p>
+    <h2>6. Scaling and Optimization</h2>
+    <p>Azure allows scaling applications horizontally or vertically based on demand using services like Azure Autoscale and Azure Virtual Machine Scale Sets. Optimization techniques such as cost management, performance tuning, and resource right-sizing help in maximizing the efficiency and reducing costs.</p>
+    <h2>7. Decommissioning</h2>
+    <p>Eventually, when an application or service is no longer needed, it is decommissioned from Azure resources. Proper decommissioning ensures that resources are released efficiently and securely.</p>
+    <p>These are the key stages of the deployment lifecycle in Azure. Effective management and automation throughout these stages are crucial for delivering high-quality applications and services.</p>
 </body>
 </html>
